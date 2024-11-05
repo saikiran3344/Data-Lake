@@ -1,0 +1,15 @@
+# ingest_data.py
+import boto3
+import pandas as pd
+
+s3 = boto3.client("s3")
+
+def upload_to_datalake(file_path, bucket_name):
+    df = pd.read_csv(file_path)
+    output_file = file_path.split('/')[-1].replace(".csv", ".parquet")
+    df.to_parquet(output_file)
+
+    s3.upload_file(output_file, bucket_name, f"data/{output_file}")
+    print(f"File {output_file} uploaded to data lake.")
+
+upload_to_datalake("sample_data.csv", "your-data-lake-bucket")
